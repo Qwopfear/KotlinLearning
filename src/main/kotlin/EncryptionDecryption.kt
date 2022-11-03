@@ -6,6 +6,11 @@ fun main() {
     val stage2 = knowledgeIsKey()
 
     println("$stage1\n$stage2")
+
+    // stage 3
+    cipher()
+
+
 }
 
 
@@ -49,4 +54,35 @@ fun knowledgeIsKey(): String {
 
     return result
 
+}
+
+fun cipher(){
+    val action = readln()
+    val text = readln()
+    val shift = readln().toInt()
+
+
+    when (action) {
+        "enc" ->  println(encryption(text, shift))
+        "dec" ->  println(decryption(text, shift))
+        else  ->  println("There is no available action")
+    }
+
+
+}
+
+fun decryption(text: String, shift: Int) : String {
+    var result = ""
+    for (i in text.indices) {
+        result += text[i] - shift
+    }
+    return result
+}
+
+fun encryption(text: String, shift: Int) : String{
+    var result = ""
+    for (i in text.indices) {
+        result += text[i] + shift
+    }
+    return result
 }
