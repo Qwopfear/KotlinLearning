@@ -1,6 +1,11 @@
+import java.util.Arrays
+import java.util.Scanner
+
 fun main() {
-    val result = mySol("we found a treasure!")
-    print(result)
+    val stage1 = mySol("we found a treasure!")
+    val stage2 = knowledgeIsKey()
+
+    println("$stage1\n$stage2")
 }
 
 
@@ -23,4 +28,25 @@ fun mySol(text: String): String {
 
 
     return result
+}
+
+fun knowledgeIsKey(): String {
+    val text = readln()
+    val shift = readln().toInt()
+    var result = ""
+    for (i in text.indices) {
+        if (text[i].code >=  'a'.code && text[i].code <= 'z'.code) {
+            if (text[i].code + shift > 'z'.code) {
+                result += ('a'.code - 1 + (text[i].code + shift - 'z'.code)).toChar()
+            } else {
+                result += text[i] + shift
+            }
+        } else {
+            result += text[i]
+        }
+
+    }
+
+    return result
+
 }
