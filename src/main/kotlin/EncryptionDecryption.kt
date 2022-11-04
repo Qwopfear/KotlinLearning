@@ -1,7 +1,7 @@
 import java.util.Arrays
 import java.util.Scanner
 
-fun main() {
+fun main(args : Array<String>) {
     val stage1 = mySol("we found a treasure!")
     val stage2 = knowledgeIsKey()
 
@@ -10,7 +10,32 @@ fun main() {
     // stage 3
     cipher()
 
+    // stage 4
 
+    cipherWithArgs(args)
+
+
+}
+
+
+fun cipherWithArgs(args: Array<String>) {
+    var mode : String = "enc"
+    var data : String = ""
+    var key : Int = 0
+    for (index in args.indices){
+        when (args[index]){
+            "-mode" -> mode = args[index + 1]
+            "-key" ->  key =  args[index + 1].toInt()
+            "-data" -> data = args[index + 1]
+        }
+    }
+
+//    println("$mode $key $data")
+    when (mode) {
+        "enc" ->  println(encryption(data, key))
+        "dec" ->  println(decryption(data, key))
+        else  ->  println("There is no available action")
+    }
 }
 
 
