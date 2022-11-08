@@ -14,6 +14,54 @@ fun main(args : Array<String>) {
 
     cipherWithArgs(args)
 
+    //stage 5 
+    
+    cipherWithArgsAndFileReading(args)
+    
+
+}
+
+
+fun cipherWithArgsAndFileReading(args: Array<String>) {
+    var data = ""
+    var mode = ""
+    var key = 0
+    var inputPath = ""
+    var outputPath = ""
+    var result = ""
+    for (index in args.indices){
+        when (args[index]) {
+            "-data" -> data = args[index + 1]
+            "-mode" -> mode = args[index + 1]
+            "-key" -> key = args[index + 1].toInt()
+            "-in" -> inputPath = args[index + 1]
+            "-out" -> outputPath = args[index + 1]
+        }
+    }
+
+    if (data.isEmpty()){
+        val inputFile = File(inputPath)
+        try {
+            data = inputFile.readText()
+        } catch (e : FileNotFoundException){
+            mode = "Error"
+        }
+    }
+
+    if (mode != "Error"){
+        when (mode){
+            "enc" -> result = encryption(data,key)
+            "dec" -> result = decryption(data,key)
+        }
+
+        if (outputPath.isEmpty()){
+            println(result)
+        }else {
+            val outputFile = File(outputPath).also { it.writeText(result) }
+        }
+    }else {
+        println(mode)
+    }
 
 }
 
