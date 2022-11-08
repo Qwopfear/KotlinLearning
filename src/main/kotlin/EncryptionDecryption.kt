@@ -14,56 +14,60 @@ fun main(args : Array<String>) {
 
     cipherWithArgs(args)
 
-    //stage 5 
+    //stage 5 / 6
     
     cipherWithArgsAndFileReading(args)
     
-
+    
+    
 }
 
 
 fun cipherWithArgsAndFileReading(args: Array<String>) {
     var data = ""
-    var mode = ""
+    var mode = "enc"
     var key = 0
     var inputPath = ""
     var outputPath = ""
     var result = ""
-    for (index in args.indices){
+    var shift = "shift"
+    for (index in args.indices) {
         when (args[index]) {
             "-data" -> data = args[index + 1]
             "-mode" -> mode = args[index + 1]
-            "-key" -> key = args[index + 1].toInt()
+            "-key" -> key = args[index + 1].toInt() % 26
             "-in" -> inputPath = args[index + 1]
             "-out" -> outputPath = args[index + 1]
+            "-alg" -> shift = args[index + 1]
         }
     }
 
-    if (data.isEmpty()){
+    if (data.isEmpty()) {
         val inputFile = File(inputPath)
         try {
             data = inputFile.readText()
-        } catch (e : FileNotFoundException){
+        } catch (e: FileNotFoundException) {
             mode = "Error"
         }
     }
 
-    if (mode != "Error"){
-        when (mode){
-            "enc" -> result = encryption(data,key)
-            "dec" -> result = decryption(data,key)
+    if (mode != "Error") {
+        when (mode) {
+            "enc" -> result = encryption(data, key, shift)
+            "dec" -> result = decryption(data, key, shift)
         }
 
-        if (outputPath.isEmpty()){
+        if (outputPath.isEmpty()) {
             println(result)
-        }else {
+        } else {
             val outputFile = File(outputPath).also { it.writeText(result) }
         }
-    }else {
+    } else {
         println(mode)
     }
 
 }
+
 
 
 fun cipherWithArgs(args: Array<String>) {
@@ -144,18 +148,47 @@ fun cipher(){
 
 }
 
-fun decryption(text: String, shift: Int) : String {
+fun decryption(text: String, key: Int, shift: String = "shift"): String {
     var result = ""
-    for (i in text.indices) {
-        result += text[i] - shift
+    when (shift) {
+        "unicode" -> text.forEach { result += it - key }.toString()
+        "shift" -> text.forEach {
+            result += if (it.code in 97..122 || it.code in 65..90) {
+                if (it.code - key < 97) {
+                    (123 - (abs(97 - (it.code - key)))).toChar()
+                } else if (it.code - key < 65 && it.code < 97) {
+                    (91 - (abs(65 - (it.code - key)))).toChar()
+                } else {
+                    (it.code - key).toChar()
+                }
+            } else {
+                it
+            }
+        }
+
     }
+
     return result
 }
 
-fun encryption(text: String, shift: Int) : String{
+fun encryption(text: String, key: Int, shift: String = "shift"): String {
     var result = ""
-    for (i in text.indices) {
-        result += text[i] + shift
+    when (shift) {
+        "unicode" -> text.forEach { result += it + key }
+        "shift" -> text.forEach {
+            result += if (it.code in 97..122 || it.code in 65..90) {
+                if (it.code + key > 122) {
+                    (96 + (it.code + key - 122)).toChar()
+                } else if (it.code + key > 90 && it.code < 97) {
+                    (64 + (it.code + key - 90)).toChar()
+                } else {
+                    (it.code + key).toChar()
+                }
+            } else {
+                it
+            }
+        }
     }
+
     return result
 }
